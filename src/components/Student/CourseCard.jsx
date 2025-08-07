@@ -4,7 +4,7 @@ import { AppContext } from '../../context/AppContext';
 import { Link } from 'react-router-dom';
 
 function CourseCard({ course }) {
-  const { currency } = useContext(AppContext);
+  const { currency , calculateRating } = useContext(AppContext);
 
   return (
     <Link to={'/course/' + course._id} onClick={()=> scrollTo(0,0)} className='border border-gray-500/30 ob-6 overflow-hidden rounded-lg'>
@@ -13,13 +13,13 @@ function CourseCard({ course }) {
         <h3 className='text-base font-semibold'>{course.courseTitle}</h3> {/* ✅ fixed */}
         <p className='text-gray-500'>{course.educator.name}</p>
         <div className='flex space-x-2 items-center'>
-          <p>4.5</p>
+          <p>{calculateRating(course)}</p>
           <div className='flex'>
             {[...Array(5)].map((_, idx) => (
-              <img key={idx} src={assets.star} alt='' className='w-3.5 h-3.5'/>
+              <img key={idx} src={idx < Math.floor(calculateRating(course)) ? assets.star : assets.star_blank} alt='rating' className='w-3.5 h-3.5'/>
             ))}
           </div>
-          <p className='text-gray-500'>22</p>
+          <p className='text-gray-500'>{course.courseRatings.length}</p>
         </div>
         <p className='text-base font-semibold text-gray-800'>
           {currency}

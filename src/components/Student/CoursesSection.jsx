@@ -5,7 +5,7 @@ import CourseCard from './CourseCard';
 
 function CoursesSection() {
   const { allCourses } = useContext(AppContext);
-  console.log("Courses in UI:", allCourses);
+  // console.log("Courses in UI:", allCourses);
 
   return (
     <div className='flex flex-col items-center justify-center py-16 md:px-40 px-8'>

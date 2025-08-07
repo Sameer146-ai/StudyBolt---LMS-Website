@@ -11,7 +11,7 @@ import Dashboard from './Pages/Educators/Dashboard'
 import AddCourse from './Pages/Educators/AddCourse'
 import MyCourses from './Pages/Educators/MyCourses'
 import StudentsEnrolled from './Pages/Educators/StudentsEnrolled'
-import Navbar from './components/Educator/Navbar'
+import Navbar from './components/Student/Navbar'
 function App() {
 
   const isEducatorRoute = useMatch('/educator/*')
