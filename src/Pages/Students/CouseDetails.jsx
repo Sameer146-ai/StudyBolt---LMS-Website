@@ -4,6 +4,7 @@ import { AppContext } from "../../context/AppContext";
 import { assets } from "../../assets/assets";
 import Loading from "../../components/Student/Loading";
 import humanizeDuration from "humanize-duration";
+import YouTube from 'react-youtube'
 import Footer from "../../components/Student/Footer";
 function CouseDetails() {
   const { id } = useParams();
@@ -17,7 +18,8 @@ function CouseDetails() {
   } = useContext(AppContext);
 
   const [courseData, setCourseData] = useState(null);
-  const [isAllreadyEnrolled , setIsAllreadyEnrolled] = useState(false)
+  const [isAllreadyEnrolled , setIsAllreadyEnrolled] = useState(false);
+  const [playerData , setPlayerData] = useState(null)
 
   async function fetchCourseDta() {
     const findedCourse = allCourses.find((course) => course._id === id);
@@ -26,7 +28,7 @@ function CouseDetails() {
 
   useEffect(() => {
     fetchCourseDta();
-  }, []);
+  }, [ allCourses ]);
   return courseData ? (
     <>
       <div className="flex md:flex-row flex-col-reverse gap-10 relative items-start justify-between md:px-36 px-8 md:pt-30 pt-20 text-left">
@@ -114,7 +116,11 @@ function CouseDetails() {
                                 <p>{lecture.lectureTitle}</p>
                                 <div className="flex gap-2">
                                   {lecture.isPreviewFree && (
-                                    <p className="text-blue-600 cursor-pointer">
+                                    <p className="text-blue-600 cursor-pointer" onClick={()=>setPlayerData(
+                                      {
+                                        videoId : lecture.lectureUrl.split('/').pop()
+                                      }
+                                    )}> 
                                       Preview
                                     </p>
                                   )}
@@ -150,7 +156,16 @@ function CouseDetails() {
         {/* Right Coloumn */}
 
         <div className="max-w-course-card z-10 shadow-custom-card rounded-t md:rounded-none overflow-hidden bg-white min-w[300px] sm:min-w-[420px]">
-          <img src={courseData.courseThumbnail} alt="course-Thumbnail" />
+
+          {
+            playerData ? 
+            
+            <YouTube videoId={playerData.videoId} opts={{playerVars:{
+              autoplay:1
+            }}} iframeClassName="aspect-video w-full"/>
+
+            :<img src={courseData.courseThumbnail} alt="course-Thumbnail" />
+          }
           <div className="p-5">
             <div className="flex items-center gap-2">
               <img src={assets.time_left_clock_icon} alt="time left" className="w-3.5"/>
