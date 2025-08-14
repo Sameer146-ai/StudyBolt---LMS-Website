@@ -12,6 +12,7 @@ import AddCourse from './Pages/Educators/AddCourse'
 import MyCourses from './Pages/Educators/MyCourses'
 import StudentsEnrolled from './Pages/Educators/StudentsEnrolled'
 import Navbar from './components/Student/Navbar'
+import "quill/dist/quill.snow.css"
 function App() {
 
   const isEducatorRoute = useMatch('/educator/*')
