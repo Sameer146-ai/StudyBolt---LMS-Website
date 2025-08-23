@@ -8,7 +8,7 @@ function MyEnrollment() {
   const {enrolledCourses,calculateCourseDuration,navigate} = useContext(AppContext)
 
   //dummy courses
-  const [progressArray , setProgressArray] = useState([
+  const [progressArray ] = useState([
     {lectureCompleted : 4, totelLectures: 4},
     {lectureCompleted : 1, totelLectures: 5},
     {lectureCompleted : 3, totelLectures: 7},

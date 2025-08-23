@@ -3,22 +3,21 @@ import './index.css';
 import App from './App.jsx';
 import { AppContextProvider } from './context/AppContextProvider.jsx';
 import { BrowserRouter } from 'react-router-dom';
-import { Auth0Provider } from '@auth0/auth0-react';
+import { ClerkProvider } from '@clerk/clerk-react'; 
 
-// const clientId = import.meta.env.VITE_AUTH0_CLIENT_ID;
+// Import your Publishable Key
+const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
+
+if (!PUBLISHABLE_KEY) {
+  throw new Error('Missing Publishable Key');
+}
 
 createRoot(document.getElementById('root')).render(
-  <BrowserRouter>
-    <Auth0Provider
-      domain="dev-4c5uc7l6bywds61n.us.auth0.com"
-      clientId="YFGJ8ri1dqzYwHhUo5WZiAhcITssKH9G"
-      authorizationParams={{
-        redirect_uri: window.location.origin,
-      }}
-    >
+  <ClerkProvider publishableKey={PUBLISHABLE_KEY} afterSignOutUrl="/">
+    <BrowserRouter>
       <AppContextProvider>
         <App />
       </AppContextProvider>
-    </Auth0Provider>
-  </BrowserRouter>
+    </BrowserRouter>
+  </ClerkProvider>
 );
