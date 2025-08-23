@@ -12,10 +12,13 @@ await connectDB()
 app.use(cors())
 
 app.get('/', (req , res)=>{
-    res.send("Api working")
+    res.json({
+        success:false,
+        result:"api is working"
+    })
 });
 
-app.post("/auth0-webhook", express.json(), auth0Webhooks);
+// app.post("/auth0-webhook", express.json(), auth0Webhooks);
 
 const PORT = process.env.PORT || 5000;
 
