@@ -1,6 +1,5 @@
 import { Webhook } from "svix";
-import user from "../models/user.js";
-import { json } from "express";
+import User from "../models/user.js";
 
 // API Controller Function to manage clerk user with database
 export const clerkWebhooks = async (req, res) => {
@@ -19,39 +18,45 @@ export const clerkWebhooks = async (req, res) => {
       case "user.created": {
         const userData = {
           _id: data.id,
-          email: data.email_address[0].email_address,
-          name: data.first_name + " " + data.last_name,
+          email: data.email_addresses?.[0]?.email_address, // ✅ FIXED
+          name: `${data.first_name || ""} ${data.last_name || ""}`.trim(),
           imageUrl: data.image_url,
         };
 
-        await user.create(userData);
-        res.json({});
+        await User.create(userData);
+        console.log("✅ User created:", userData);
+        res.json({ success: true });
         break;
       }
 
       case "user.updated": {
         const userData = {
-          email: data.email_address[0].email_address,
-          name: data.first_name + " " + data.last_name,
+          email: data.email_addresses?.[0]?.email_address, // ✅ FIXED
+          name: `${data.first_name || ""} ${data.last_name || ""}`.trim(),
           imageUrl: data.image_url,
         };
 
-        await user.findByIdAndUpdate(data.id, userData);
-        res.json({});
+        await User.findByIdAndUpdate(data.id, userData);
+        console.log("🔄 User updated:", userData);
+        res.json({ success: true });
         break;
       }
 
       case "user.deleted": {
-        await user.findByIdAndDelete(data.id);
-        res.json({});
+        await User.findByIdAndDelete(data.id);
+        console.log("🗑️ User deleted:", data.id);
+        res.json({ success: true });
         break;
       }
 
       default:
+        console.log("⚠️ Unknown event type:", type);
+        res.json({ received: true });
         break;
     }
   } catch (error) {
-    res.json({
+    console.error("❌ Webhook error:", error);
+    res.status(500).json({
       success: false,
       message: error.message,
     });
