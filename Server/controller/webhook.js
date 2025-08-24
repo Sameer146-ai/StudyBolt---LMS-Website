@@ -1,26 +1,31 @@
+// controller/webhook.js
 import { Webhook } from "svix";
 import User from "../models/user.js";
 
-// API Controller Function to manage clerk user with database
 export const clerkWebhooks = async (req, res) => {
   try {
+    // ✅ Verify webhook using rawBody (NOT JSON.stringified)
     const whook = new Webhook(process.env.CLERK_WEBHOOK_SECRET);
 
-    await whook.verify(JSON.stringify(req.body), {
-      "svix-id": req.headers["svix-id"],
-      "svix-timestamp": req.headers["svix-timestamp"],
-      "svix-signature": req.headers["svix-signature"],
+    const payload = req.body;
+    const headers = req.headers;
+
+    // svix verify needs raw body (we will handle middleware in server.js)
+    whook.verify(req.rawBody, {
+      "svix-id": headers["svix-id"],
+      "svix-timestamp": headers["svix-timestamp"],
+      "svix-signature": headers["svix-signature"],
     });
 
-    const { data, type } = req.body;
+    const { data, type } = payload;
 
     switch (type) {
       case "user.created": {
         const userData = {
           _id: data.id,
-          email: data.email_addresses?.[0]?.email_address, // ✅ FIXED
+          email: data.email_addresses?.[0]?.email_address || "",
           name: `${data.first_name || ""} ${data.last_name || ""}`.trim(),
-          imageUrl: data.image_url,
+          imageUrl: data.image_url || "",
         };
 
         await User.create(userData);
@@ -31,9 +36,9 @@ export const clerkWebhooks = async (req, res) => {
 
       case "user.updated": {
         const userData = {
-          email: data.email_addresses?.[0]?.email_address, // ✅ FIXED
+          email: data.email_addresses?.[0]?.email_address || "",
           name: `${data.first_name || ""} ${data.last_name || ""}`.trim(),
-          imageUrl: data.image_url,
+          imageUrl: data.image_url || "",
         };
 
         await User.findByIdAndUpdate(data.id, userData);
@@ -55,10 +60,7 @@ export const clerkWebhooks = async (req, res) => {
         break;
     }
   } catch (error) {
-    console.error("❌ Webhook error:", error);
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+    console.error("❌ Webhook error:", error.message);
+    res.status(500).json({ success: false, message: error.message });
   }
 };
