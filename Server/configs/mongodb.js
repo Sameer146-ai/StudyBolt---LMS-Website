@@ -6,6 +6,7 @@ async function connectDB(){
     mongoose.connection.on("connected" , ()=> console.log("DataBase connected Successfully"))
 
     await mongoose.connect(`${process.env.MONGODB_URI}/LMS`)
-}
+    // console.log(process.env.MONGODB_URI)
+}   
 
 export default connectDB
